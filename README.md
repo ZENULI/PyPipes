@@ -1,8 +1,5 @@
 # PyPipes
 
-#<img src="docs/source/_static/img/project_logo.png" alt="drawing" width="250"/>
-
-
 **[Documentation]()** | **[Paper](https://doi.org/10.1016/j.gmod.2020.101079)** | **[Colab Notebooks](https://drive.google.com/drive/folders/1InpU4yZAYGR9_NB4wSGDx7t2d6K2b9zy?usp=sharing)** | **[Video Tutorials](https://www.youtube.com)** | **[Master Degree website](https://departement-informatique.univ-tlse3.fr/master-igai/)** 
 
 
