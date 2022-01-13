@@ -98,8 +98,6 @@ $ pip install -r requirements.txt
 #### 3. Build the project
 ```bash
 $ make
-$ python setup.py build
-$ python setup.py install
 ```
 #### 4. Testing
 ```bash
