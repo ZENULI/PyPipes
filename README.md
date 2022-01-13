@@ -28,18 +28,18 @@ lution network, Skeleton extraction
 
 ## Table of Contents
 
-#### 1. [Architecture Overview]()
-* [The pipeline]()
-* [Neural Network]()
+#### 1. [Architecture Overview](https://github.com/ZENULI/PyPipes#architecture-overview)
+* [The pipeline](https://github.com/ZENULI/PyPipes#the-pipeline)
+* [Neural Network](https://github.com/ZENULI/PyPipes#neural-network)
 
-#### 2. [Download]()
-* [Requirements]()
-* [From master]()
-* [With Docker]()
+#### 2. [Download](https://github.com/ZENULI/PyPipes#download)
+* [Requirements](https://github.com/ZENULI/PyPipes#requirements)
+* [From master](https://github.com/ZENULI/PyPipes#from-master)
+* [With Docker](https://github.com/ZENULI/PyPipes#with-docker)
 
-#### 3. [Getting Started]()
+#### 3. [Getting Started](https://github.com/ZENULI/PyPipes#getting-started)
 
-#### 4. [Licence]()
+#### 4. [Licence](https://github.com/ZENULI/PyPipes#license)
 
 <br>
 
@@ -64,11 +64,11 @@ lution network, Skeleton extraction
 
 ## Download
 
-**Warning:** We do not recommend installation of the environnement as a root user on your system Python. Please setup a Anaconda or Miniconda environment or create a Docker image.
+**Warning:** We do not recommend installation of the environnement as a root user on your system Python. Please setup a virtual environment or create a Docker image.
 
 |             | `cpu` | `cu102` | `cu113` |
 |-------------|-------|---------|---------|
-| **Linux**   | ✅    | ✅      | ✅      |
+| **Linux**   | ✅    |         |         |
 | **Windows** |       |         |         |
 | **macOS**   |       |         |         |
 
@@ -137,22 +137,22 @@ $ python3 setup.py test
 If you do not want to generate the dataset, you can our own. 
 
 ```bash
-pip install -r requirements.txt
-chmod +x download.sh
-./download.sh
+$ pip install -r requirements.txt
+$ chmod +x download.sh
+$ ./download.sh
 ```
 
 #### 2. Preprocessing
 
 ```bash
-python build_vocab.py   
-python resize.py
+$ python build_vocab.py   
+$ python resize.py
 ```
 
 #### 3. Train the model
 
 ```bash
-python train.py    
+$ python train.py    
 ```
 
 ###### Or use our pretrained model
@@ -162,7 +162,7 @@ If you do not want to train the model from scratch, you can use a pretrained mod
 #### 4. Test the model 
 
 ```bash
-python sample.py --image='png/example.png'
+$ python sample.py --image='png/example.png'
 ```
 
 ## License
