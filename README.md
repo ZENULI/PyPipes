@@ -26,39 +26,43 @@ lution network, Skeleton extraction
 
 ```
 
+## Table of Contents
+
+#### 1. [Architecture Overview]()
+* [The pipeline]()
+* [Neural Network]()
+
+#### 2. [Download]()
+* [Requirements]()
+* [From master]()
+* [With Docker]()
+
+#### 3. [Getting Started]()
+
+#### 4. [Licence]()
+
+<br>
+
 ## Architecture Overview
+
+### The pipeline
+
+```
+**TODO**
+```
 
 <img src="docs/source/_static/img/project_architecture.png" alt="drawing" height="400"/>
 
+
+### Neural Network 
+
+```
 **TODO**
-
-## Neural Network 
-
+```
 <img src="docs/source/_static/img/nn_architecture.png" alt="drawing" height="400"/>
 
-**TODO**
 
-
-## Using this project (how to)
-
-**TODO**
-
-### Manage experiments with GraphGym
-
-GraphGym allows you to manage and launch GNN experiments, using a highly modularized pipeline (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/graphgym.html) for the accompanying tutorial).
-
-```
-git clone https://github.com/pyg-team/pytorch_geometric.git
-cd pytorch_geometric/graphgym
-bash run_single.sh  # run a single GNN experiment (node/edge/graph-level)
-bash run_batch.sh   # run a batch of GNN experiments, using differnt GNN designs/datasets/tasks
-```
-
-Users are highly encouraged to check out the [documentation](https://pytorch-geometric.readthedocs.io/en/latest), which contains additional tutorials on the essential functionalities of PyG, including data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
-For a quick start, check out our [examples](https://github.com/pyg-team/pytorch_geometric/tree/master/examples) in `examples/`.
-
-
-## Installation
+## Download
 
 **Warning:** We do not recommend installation of the environnement as a root user on your system Python. Please setup a Anaconda or Miniconda environment or create a Docker image.
 
@@ -68,53 +72,103 @@ For a quick start, check out our [examples](https://github.com/pyg-team/pytorch_
 | **Windows** |       |         |         |
 | **macOS**   |       |         |         |
 
-### Docker
-
-Build the environnement image.
+### Requirements
 
 ```
-wget https://raw.githubusercontent.com/seb2s/CHDO/main/docker/Dockerfile?token=GHSAT0AAAAAABOKBZGG4WVAPDTMWZFJMOFCYOYFAKQ
-docker build -t project_name
-```
-Run the container.
-
-```
-docker run -it --entryppoint bash project_name
-```
-
-In the container 
-
-```
-git clone https://github.com/seb2s/CHDO/blob/main/docker/Dockerfile
-cd CHDO
-python3 setup.py test
-```
-**TODO :**
-* Compléter le Dockerfile avec le reste des librairies
-* ajouter d'autres test (tester l'installation de toutes les libs)
-
-### Anaconda
-
 **TODO**
+```
 
 ### From master
 
-## Requirements
-
+#### 1. Clone the repositories
+```bash
+$ git clone https://github.com/ZENULI/PyPipes.git
+$ cd PyPipes
+$ make
+$ python setup.py build
+$ python setup.py install
+$ cd ../../
+$ git clone https://github.com/yunjey/pytorch-tutorial.git
+$ cd pytorch-tutorial/tutorials/03-advanced/image_captioning/
 ```
+#### 2. Testing
 
+```bash
+$ python3 setup.py test
 ```
-
-**TODO**
-
-### Testing
-
-You can run tests by running `pytest` in the root, or by running `python3 setup.py test`. Code coverage is enabled with pytest-cov.
 You can find some more tests under the `testing/` folder!
+
+```bash
+$ python3 testing/test_application.py
+```
+
+### With Docker
+
+#### 1. Build the environnement image
+
+```bash
+$ wget https://raw.githubusercontent.com/seb2s/CHDO/main/docker/Dockerfile?token=GHSAT0AAAAAABOKBZGG4WVAPDTMWZFJMOFCYOYFAKQ
+$ docker build -t project_name
+```
+#### 2. Run the container
+
+```bash
+$ docker run -it --entryppoint bash project_name
+```
+
+#### 3. In the container 
+
+```bash
+$ git clone https://github.com/seb2s/CHDO/blob/main/docker/Dockerfile
+$ cd CHDO
+$ python3 setup.py test
+```
+
+## Getting Started 
+
+
+#### 1. Generate the dataset
+
+```
+**TODO**
+```
+
+###### Or download our dataset
+If you do not want to generate the dataset, you can our own. 
+
+```bash
+pip install -r requirements.txt
+chmod +x download.sh
+./download.sh
+```
+
+#### 2. Preprocessing
+
+```bash
+python build_vocab.py   
+python resize.py
+```
+
+#### 3. Train the model
+
+```bash
+python train.py    
+```
+
+###### Or use our pretrained model
+If you do not want to train the model from scratch, you can use a pretrained model. You can download the pretrained model [here](https://www.dropbox.com/s/ne0ixz5d58ccbbz/pretrained_model.zip?dl=0) and the vocabulary file [here](https://www.dropbox.com/s/26adb7y9m98uisa/vocap.zip?dl=0). You should extract pretrained_model.zip to `./models/` and vocab.pkl to `./data/` using `unzip` command.
+
+
+#### 4. Test the model 
+
+```bash
+python sample.py --image='png/example.png'
+```
 
 ## License
 
+```
 **TODO**
-
+```
 
 <img src="docs/source/_static/img/universite_logo.png" alt="drawing" width="200"/>

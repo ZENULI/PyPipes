@@ -10,7 +10,7 @@
 
 import pytest
 
-from project.hello_world import hello_world
+from src.hello_world import hello_world
 
 @pytest.mark.parametrize("argument_values", [True, 1, 1.0])
 def test_example(argument_values):
