@@ -106,7 +106,7 @@ $ python3 setup.py test
 You can find some more tests under the `testing/` folder!
 
 ```bash
-$ python3 testing/test_application.py
+$  pytest testing/test_application.py
 ```
 
 ### From Docker
@@ -158,8 +158,12 @@ $ python sample.py --image='png/example.png'
 
 ## License
 
-```
-**TODO**
-```
+
+MIT License Copyright (c) 2022 ZENULI
+
+Created by ZENULI at University Paul Sabatier III :
+#### https://github.com/BastienKovac
+#### https://github.com/Ulynor
+#### https://github.com/seb2s
 
 <img src="docs/source/_static/img/universite_logo.png" alt="drawing" width="200"/>

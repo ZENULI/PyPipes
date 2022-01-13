@@ -1,11 +1,12 @@
 """
-# This files originate from the "" project:
-#     https://github.com/
-# Created by           at University Paul Sabatier III:
-#     https://github.com/
-#     https://github.com/
-#     https://github.com/
+# This files originate from the "PyPipes" project:
+#   https://github.com/ZENULI/PyPipes
+# Created by ZENULI at University Paul Sabatier III :
+#   https://github.com/BastienKovac
+#   https://github.com/Ulynor
+#   https://github.com/seb2s
 # License:
+#   MIT License Copyright (c) 2022 ZENULI
 """
 
 if __name__ == '__main__':
