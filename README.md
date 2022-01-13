@@ -7,6 +7,10 @@
 
 It allows to reconstruct a 3d pipe model from a points cloud.
 
+<img src="docs/source/_static/img/pipeline.png" alt="drawing" height="200"/>
+
+
+
 ```
 #### Abstract
 
@@ -39,7 +43,7 @@ lution network, Skeleton extraction
 
 #### 3. [Getting Started](https://github.com/ZENULI/PyPipes#getting-started)
 
-#### 4. [Licence](https://github.com/ZENULI/PyPipes#license)
+#### 4. [License](https://github.com/ZENULI/PyPipes#license)
 
 <br>
 
@@ -59,7 +63,7 @@ lution network, Skeleton extraction
 ```
 **TODO**
 ```
-<img src="docs/source/_static/img/nn_architecture.png" alt="drawing" height="400"/>
+<img src="docs/source/_static/img/nn_architecture.png" alt="drawing" height="300"/>
 
 
 ## Download
@@ -129,15 +133,17 @@ $ python3 setup.py test
 
 #### 1. Generate the dataset
 
-```
-**TODO**
-```
-
-###### Or download our dataset
-If you do not want to generate the dataset, you can our own. 
+You can generate the dataset using our other project [CloudPipesGenerator](https://github.com/ZENULI/CloudPipesGenerator)
 
 ```bash
-$ pip install -r requirements.txt
+$ mkdir data
+$ python3 PATH_TO_CLOUDPIPESGENERATOR/generate_dataset.py -n 5000 -m 4 /data
+```
+
+###### Or download our dataset online
+If you do not want to generate the dataset, you can download our own. 
+
+```bash
 $ chmod +x download.sh
 $ ./download.sh
 ```
