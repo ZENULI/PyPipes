@@ -1,19 +1,28 @@
+## Usage
+
 #### 1. Build the environnement image
 
 ```bash
-$ wget https://raw.githubusercontent.com/seb2s/CHDO/main/docker/Dockerfile?token=GHSAT0AAAAAABOKBZGG4WVAPDTMWZFJMOFCYOYFAKQ
-$ docker build -t project_name
+$ wget https://raw.githubusercontent.com/ZENULI/PyPipes/main/docker/Dockerfile
+$ docker build -t Pypipes
 ```
 #### 2. Run the container
 
 ```bash
-$ docker run -it --entryppoint bash project_name
+$ docker run -it --entryppoint bash Pypipes
 ```
 
 #### 3. In the container 
 
 ```bash
-$ git clone https://github.com/seb2s/CHDO/blob/main/docker/Dockerfile
-$ cd CHDO
+$ cd Pypipes
 $ python3 setup.py test
+```
+
+###### To delete the container : 
+
+```bash
+$ exit
+$ docker stop Pypipes
+$ docker rm -f Pypipes
 ```

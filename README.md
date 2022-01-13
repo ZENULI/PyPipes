@@ -1,6 +1,6 @@
 # PyPipes
 
-**[Documentation]()** | **[Paper](https://doi.org/10.1016/j.gmod.2020.101079)** | **[Colab Notebooks](https://drive.google.com/drive/folders/1InpU4yZAYGR9_NB4wSGDx7t2d6K2b9zy?usp=sharing)** | **[Video Tutorials](https://www.youtube.com)** | **[Master Degree website](https://departement-informatique.univ-tlse3.fr/master-igai/)** 
+**[Documentation](https://zenuli.github.io/)** | **[Paper](https://doi.org/10.1016/j.gmod.2020.101079)** | **[Colab Notebooks](https://drive.google.com/drive/folders/1InpU4yZAYGR9_NB4wSGDx7t2d6K2b9zy?usp=sharing)** | **[Video Tutorials]()** | **[Master Degree website](https://departement-informatique.univ-tlse3.fr/master-igai/)** 
 
 ### [WARNING] Project currently in progress !
 
@@ -90,80 +90,65 @@ lution network, Skeleton extraction
 ```bash
 $ git clone https://github.com/ZENULI/PyPipes.git
 ```
-#### 2. Build the project
+#### 2. Install the requirements
 ```bash
 $ cd PyPipes
+$ pip install -r requirements.txt
+```
+#### 3. Build the project
+```bash
 $ make
 $ python setup.py build
 $ python setup.py install
 ```
-
-#### 2. Testing
-
+#### 4. Testing
 ```bash
 $ python3 setup.py test
 ```
 You can find some more tests under the `testing/` folder!
-
 ```bash
 $  pytest testing/test_application.py
 ```
-
 ### From Docker
-
 See documentation [here](https://github.com/ZENULI/PyPipes/tree/main/docker).
 
 ## Getting Started 
 
-
 #### 1. Generate the dataset
-
 You can generate the dataset using our other project [CloudPipesGenerator](https://github.com/ZENULI/CloudPipesGenerator)
-
 ```bash
-$ mkdir data
-$ python3 PATH_TO_CLOUDPIPESGENERATOR/generate_dataset.py -n 5000 -m 4 /data
+$ python3 PATH_TO_CLOUDPIPESGENERATOR/generate_dataset.py -n 5000 -m 4 data/pointclouds
 ```
-
 ###### Or download our dataset online
 If you do not want to generate the dataset, you can download our own. 
-
 ```bash
+$ cd data
 $ chmod +x download.sh
 $ ./download.sh
 ```
-
 #### 2. Preprocessing
-
 ```bash
 $ python build_vocab.py   
 $ python resize.py
 ```
-
 #### 3. Train the model
-
 ```bash
 $ python train.py    
 ```
-
 ###### Or use our pretrained model
 If you do not want to train the model from scratch, you can use a pretrained model. You can download the pretrained model [here](https://www.dropbox.com/s/ne0ixz5d58ccbbz/pretrained_model.zip?dl=0) and the vocabulary file [here](https://www.dropbox.com/s/26adb7y9m98uisa/vocap.zip?dl=0). You should extract pretrained_model.zip to `./models/` and vocab.pkl to `./data/` using `unzip` command.
-
-
 #### 4. Test the model 
-
 ```bash
 $ python sample.py --image='png/example.png'
 ```
 
 ## License
 
+Pypipes is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-MIT License Copyright (c) 2022 ZENULI
-
-Created by ZENULI at University Paul Sabatier III :
-#### https://github.com/BastienKovac
-#### https://github.com/Ulynor
-#### https://github.com/seb2s
+It was created by ZENULI's team at University Paul Sabatier III : 
+* https://github.com/BastienKovac
+* https://github.com/Ulynor
+* https://github.com/seb2s
 
 <img src="docs/source/_static/img/universite_logo.png" alt="drawing" width="200"/>

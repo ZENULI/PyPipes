@@ -152,5 +152,17 @@ RUN pip install --no-index torch-scatter -f https://data.pyg.org/whl/torch-1.4.0
  && pip install --no-index torch-spline-conv -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
  && pip install torch-geometric
 
+##################################################################################
+# above : dockerfile of PyG
+# below : completed for PyPipes
+
+RUN git clone https://github.com/ZENULI/PyPipes.git \
+ && cd PyPipes \
+ && pip install -r requirements.txt \
+ && make \
+ && python setup.py build \
+ && python setup.py install
+
+
 # Set the default command to python3.
 CMD ["python3"]
