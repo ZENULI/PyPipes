@@ -86,20 +86,14 @@ lution network, Skeleton extraction
 
 ### From master
 
-#### 1. Clone the repositories
+#### Build the project
 ```bash
 $ git clone https://github.com/ZENULI/PyPipes.git
-```
-#### 2. Install the requirements
-```bash
 $ cd PyPipes
 $ pip install -r requirements.txt
-```
-#### 3. Build the project
-```bash
 $ make
 ```
-#### 4. Testing
+#### Test the installation
 ```bash
 $ python3 setup.py test
 ```
@@ -120,24 +114,21 @@ $ python3 PATH_TO_CLOUDPIPESGENERATOR/generate_dataset.py -n 5000 -m 4 data/poin
 ###### Or download our dataset online
 If you do not want to generate the dataset, you can download our own. 
 ```bash
-$ cd data
-$ chmod +x download.sh
-$ ./download.sh
+$ chmod +x scripts/download.sh
+$ ./scripts/download.sh
 ```
 #### 2. Preprocessing
 ```bash
-$ python build_vocab.py   
-$ python resize.py
 ```
 #### 3. Train the model
 ```bash
-$ python train.py    
+$ python scripts/train.py    
 ```
 ###### Or use our pretrained model
 If you do not want to train the model from scratch, you can use a pretrained model. You can download the pretrained model [here](https://www.dropbox.com/s/ne0ixz5d58ccbbz/pretrained_model.zip?dl=0) and the vocabulary file [here](https://www.dropbox.com/s/26adb7y9m98uisa/vocap.zip?dl=0). You should extract pretrained_model.zip to `./models/` and vocab.pkl to `./data/` using `unzip` command.
 #### 4. Test the model 
 ```bash
-$ python sample.py --image='png/example.png'
+$ python scripts/reconst.py --graph='graph.format'
 ```
 
 ## License
