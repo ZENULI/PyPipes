@@ -2,10 +2,12 @@
 
 **[Documentation]()** | **[Paper](https://doi.org/10.1016/j.gmod.2020.101079)** | **[Colab Notebooks](https://drive.google.com/drive/folders/1InpU4yZAYGR9_NB4wSGDx7t2d6K2b9zy?usp=sharing)** | **[Video Tutorials](https://www.youtube.com)** | **[Master Degree website](https://departement-informatique.univ-tlse3.fr/master-igai/)** 
 
+###[WARNING] Project currently in progress !
 
 **This project** is a [PyTorch](https://pytorch.org/) implementation of *DeepPipes: Learning 3D pipelines reconstruction from point clouds. Lili Cheng, Zhuo Wei, Mingchao Sun, Shiqing Xin, Andrei Sharf, Yangyan Li, Baoquan Chen, Changhe Tu. Graphical Models, Volume 111, 2020,*. 
 
 It allows to reconstruct a 3d pipe model from a points cloud.
+
 
 <img src="docs/source/_static/img/pipeline.png" alt="drawing" height="200"/>
 
@@ -87,14 +89,15 @@ lution network, Skeleton extraction
 #### 1. Clone the repositories
 ```bash
 $ git clone https://github.com/ZENULI/PyPipes.git
+```
+#### 2. Build the project
+```bash
 $ cd PyPipes
 $ make
 $ python setup.py build
 $ python setup.py install
-$ cd ../../
-$ git clone https://github.com/yunjey/pytorch-tutorial.git
-$ cd pytorch-tutorial/tutorials/03-advanced/image_captioning/
 ```
+
 #### 2. Testing
 
 ```bash
@@ -108,25 +111,7 @@ $ python3 testing/test_application.py
 
 ### With Docker
 
-#### 1. Build the environnement image
-
-```bash
-$ wget https://raw.githubusercontent.com/seb2s/CHDO/main/docker/Dockerfile?token=GHSAT0AAAAAABOKBZGG4WVAPDTMWZFJMOFCYOYFAKQ
-$ docker build -t project_name
-```
-#### 2. Run the container
-
-```bash
-$ docker run -it --entryppoint bash project_name
-```
-
-#### 3. In the container 
-
-```bash
-$ git clone https://github.com/seb2s/CHDO/blob/main/docker/Dockerfile
-$ cd CHDO
-$ python3 setup.py test
-```
+See documentation [here]()
 
 ## Getting Started 
 
