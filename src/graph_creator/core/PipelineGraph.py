@@ -1,3 +1,4 @@
+import networkx as nx
 from networkx import Graph
 from numpy import ndarray
 
@@ -7,9 +8,6 @@ from src.core.PartType import PartType
 class PipelinePart:
 
     def __init__(self, part_type: PartType, coordinates: ndarray, direction: ndarray, radius: float) -> None:
-        assert coordinates.shape == (3, 1)
-        assert direction.shape == (3, 1)
-
         self._part_type = part_type
         self._coordinates = coordinates
         self._direction = direction
@@ -29,7 +27,6 @@ class PipelinePart:
 
     @coordinates.setter
     def coordinates(self, value: ndarray) -> None:
-        assert value.shape == (3, 1)
         self._coordinates = value
 
     @property
@@ -38,7 +35,6 @@ class PipelinePart:
 
     @direction.setter
     def direction(self, value: ndarray) -> None:
-        assert value.shape == (3, 1)
         self._direction = value
 
     @property
@@ -55,8 +51,14 @@ class PipelineGraph:
     def __init__(self) -> None:
         self._graph = Graph()
 
-    def add_node(self, index: int, part: PipelinePart) -> None:
-        self._graph.add_node((index, {"part": part}))
+    def add_node(self, index: int, p: PipelinePart) -> None:
+        self._graph.add_node(index, type=p.part_type, coordinates=p.coordinates, direction=p.direction, radius=p.radius)
 
     def add_edge(self, start: int, end: int, weight: float) -> None:
         self._graph.add_edge(start, end, weight=weight)
+
+    def visualize(self) -> None:
+        nx.draw(self._graph)
+
+    def clear(self) -> None:
+        self._graph.clear()
