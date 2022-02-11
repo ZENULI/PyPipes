@@ -1,4 +1,6 @@
 import networkx as nx
+import numpy as np
+import random
 from networkx import Graph
 from numpy import ndarray
 
@@ -56,6 +58,39 @@ class PipelineGraph:
 
     def add_edge(self, start: int, end: int, weight: float) -> None:
         self._graph.add_edge(start, end, weight=weight)
+
+    def complete(self) -> None:
+        nb_nodes = self._graph.number_of_nodes()
+
+        def neighbours(node):
+            return self._graph.degree[node]
+
+        def expected_neighbours(node):
+            return self._graph.nodes[node]['type'].number_of_connections()
+
+        for i in range(0, nb_nodes):
+            start_coordinates = self._graph.nodes[i]['coordinates']
+
+            candidates = [c for c in range(0, nb_nodes) if c != i]
+            random.shuffle(candidates)
+
+            neigh = neighbours(i)
+            expected = expected_neighbours(i)
+
+            while neigh < expected:
+                connection = None
+                for candidate in candidates:
+                    if neighbours(candidate) < expected_neighbours(candidate):
+                        connection = candidate
+                        break
+
+                if connection:
+                    end_coordinates = self._graph.nodes[connection]['coordinates']
+                    distance = np.linalg.norm(start_coordinates - end_coordinates)
+
+                    self._graph.add_edge(i, connection, weight=distance)
+
+                neigh += 1
 
     def visualize(self) -> None:
         nx.draw(self._graph)

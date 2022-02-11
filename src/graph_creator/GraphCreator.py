@@ -17,42 +17,48 @@ class GraphCreator:
 
         # Create first part
         coordinate = np.asarray([0., 0., 0.])
-        direction = np.asarray([0., 0., 0.])
+
+        rx = random.randrange(0, 90, 15)
+        ry = random.randrange(0, 90, 15)
+        rz = random.randrange(0, 90, 15)
+        direction = np.asarray([rx, ry, rz])
 
         radius = random.uniform(min_radius, max_radius)
 
         part_type = random_part_type()
 
         part = PipelinePart(part_type, coordinate, direction, radius)
-        graph.add_node(0, part)
 
-        current_parts = 1
+        all_parts = [part]
+
+        current_parts = 0
         while current_parts < nb_parts:
-            missing_connections = part_type.number_of_connections() - 1
-
-            last_part = current_parts - 1
             last_coordinate = coordinate
 
-            for i in range(0, missing_connections):
-                part_type = random_part_type()
+            part_type = random_part_type()
 
-                dx = random.randrange(0, 90, 15)
-                dy = random.randrange(0, 90, 15)
-                dz = random.randrange(0, 90, 15)
+            rx = random.randrange(0, 90, 15)
+            ry = random.randrange(0, 90, 15)
+            rz = random.randrange(0, 90, 15)
+            direction = np.asarray([rx, ry, rz])
 
-                coordinate = np.asarray([last_coordinate[0] + dx, last_coordinate[1] + dy, last_coordinate[2] + dz])
-                direction = np.zeros((1, 3))
+            dx = random.uniform(max_radius * 2, max_radius * 10)
+            dy = random.uniform(max_radius * 2, max_radius * 10)
+            dz = random.uniform(max_radius * 2, max_radius * 10)
 
-                radius = random.uniform(min_radius, max_radius)
+            coordinate = np.asarray([last_coordinate[0] + dx, last_coordinate[1] + dy, last_coordinate[2] + dz])
 
-                part = PipelinePart(part_type, coordinate, direction, radius)
-                distance = random.uniform(max_radius * 2, max_radius * 10)
+            radius = random.uniform(min_radius, max_radius)
 
-                graph.add_node(current_parts, part)
-                graph.add_edge(last_part, current_parts, distance)
+            part = PipelinePart(part_type, coordinate, direction, radius)
+            all_parts.append(part)
 
-                current_parts += 1
+            current_parts += 1
 
+        for i in range(0, len(all_parts)):
+            graph.add_node(i, all_parts[i])
+
+        graph.complete()
         graph.visualize()
 
         return graph
