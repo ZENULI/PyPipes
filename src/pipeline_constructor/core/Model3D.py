@@ -1,11 +1,11 @@
-from open3d.cpu.pybind.geometry.TriangleMesh import TriangleMesh
+import open3d as o3d
 
 
 class Model3D:
 
-    def __init__(self, mesh: TriangleMesh):
+    def __init__(self, mesh: o3d.geometry.TriangleMesh) -> None:
         self._mesh = mesh
 
     @property
-    def mesh(self) -> TriangleMesh:
+    def mesh(self) -> o3d.geometry.TriangleMesh:
         return self._mesh

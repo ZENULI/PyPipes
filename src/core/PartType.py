@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+import pathlib
 
 
 def random_part_type():
@@ -22,7 +23,7 @@ class PartType(Enum):
     FLANGE = 3
     CROSS = 4
 
-    def number_of_connections(self):
+    def number_of_connections(self) -> int:
         if self == self.ANGLE:
             return 2
         elif self == self.TEE:
@@ -31,3 +32,15 @@ class PartType(Enum):
             return 2
         elif self == self.CROSS:
             return 4
+
+    def part_model_file(self) -> pathlib.Path:
+        resource_dir = pathlib.Path(__file__).parent.parent.parent / "resources" / "3Dmodels"
+
+        if self == self.ANGLE:
+            return resource_dir / "coude.obj"
+        elif self == self.TEE:
+            return resource_dir / "te.obj"
+        elif self == self.FLANGE:
+            return resource_dir / "pipe4.obj"
+        elif self == self.CROSS:
+            return resource_dir / "cross.obj"

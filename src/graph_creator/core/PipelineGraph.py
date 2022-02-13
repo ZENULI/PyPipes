@@ -97,3 +97,7 @@ class PipelineGraph:
 
     def clear(self) -> None:
         self._graph.clear()
+
+    @property
+    def graph(self) -> nx.Graph:
+        return self._graph

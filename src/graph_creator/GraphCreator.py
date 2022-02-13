@@ -59,7 +59,6 @@ class GraphCreator:
             graph.add_node(i, all_parts[i])
 
         graph.complete()
-        graph.visualize()
 
         return graph
 
