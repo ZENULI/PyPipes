@@ -3,9 +3,6 @@ from src.pipeline_constructor.core.Model3D import Model3D
 from src.graph_creator.core.PipelineGraph import PipelineGraph
 from src.core.PartType import PartType
 
-import pathlib
-import random
-
 import open3d as o3d
 
 
@@ -20,22 +17,20 @@ class PipelineConstructor:
 
         for node in graph.nodes:
             mesh = o3d.io.read_triangle_mesh(str(self._part_dictionary[graph.nodes[node]['type']]))
-            mesh.compute_vertex_normals()
 
-            part_model = Model3D(mesh)
-
-            # Center the part then put it at its final coordinates
-            part_model.mesh.translate([0, 0, 0])
             coordinates = graph.nodes[node]['coordinates']
-            part_model.mesh.translate(coordinates)
+            direction = graph.nodes[node]['direction']
 
-            # Rotate part in appropriate direction
-            r = o3d.geometry.get_rotation_matrix_from_axis_angle(graph.nodes[node]['direction'])
-            part_model.mesh.rotate(r, center=graph.nodes[node]['coordinates'])
+            rotation = o3d.geometry.get_rotation_matrix_from_xyz(direction)
 
-            # Scale the part to appropriate size
-            part_model.mesh.scale(graph.nodes[node]['radius'], center=graph.nodes[node]['coordinates'])
+            mesh.translate([0., 0., 0.], relative=True)
+            mesh.rotate(rotation, center=coordinates)
+            mesh.translate(coordinates, relative=True)
 
-            model.add_element(part_model)
+            part = Model3D(mesh)
+
+            model.add_element(part)
+
+        model.compute_normals()
 
         return model

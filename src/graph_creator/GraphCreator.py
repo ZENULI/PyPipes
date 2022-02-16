@@ -49,16 +49,36 @@ class GraphCreator:
             graph.add_node(part_index, new_part)
             graph.add_edge(part_index - 1, part_index)
 
-            end_parts.append(new_part)
+            end_parts.append((new_part, connection))
 
         while len(end_parts) != 0:
-            next_part = end_parts.pop(0)
+            last_part_tuple = end_parts.pop(0)
+
+            next_part = last_part_tuple[0]
+            last_connection = last_part_tuple[1]
+
+            occupied_connection = ""
+            if last_connection == "x":
+                occupied_connection = "-x"
+            elif last_connection == "-x":
+                occupied_connection = "x"
+            elif last_connection == "y":
+                occupied_connection = "-y"
+            elif last_connection == "-y":
+                occupied_connection = "y"
+            elif last_connection == "z":
+                occupied_connection = "-z"
+            elif last_connection == "-z":
+                occupied_connection = "z"
 
             last_coordinate = next_part.coordinates
             last_part_type = next_part.part_type
             connections = last_part_type.connections_per_axis()
 
             for connection in connections:
+                if connection == occupied_connection:
+                    continue
+
                 pipe, new_part = self.create_part_and_pipe_for_connection(connection, last_coordinate, last_part_type)
 
                 part_index += 1
@@ -73,7 +93,7 @@ class GraphCreator:
                 graph.add_node(part_index, new_part)
                 graph.add_edge(part_index - 1, part_index)
 
-                end_parts.append(new_part)
+                end_parts.append((new_part, connection))
 
         return graph
 
@@ -96,13 +116,13 @@ class GraphCreator:
             new_part_coordinates[0] = new_part_coordinates[0] + distance
 
             pipe_coordinates[0] = by_axis_origin["x"] + by_axis_pipe["x"]
-            pipe_direction[2] = np.pi
+            pipe_direction[2] = np.pi / 2
         elif "y" in connection:
             distance = distance * (by_axis_origin["y"] + by_axis_pipe["y"] + by_axis_destination["y"])
             new_part_coordinates[1] = new_part_coordinates[1] + distance
 
             pipe_coordinates[1] = by_axis_origin["y"] + by_axis_pipe["y"]
-            pipe_direction[0] = np.pi
+            pipe_direction[0] = np.pi / 2
         elif "z" in connection:
             distance = distance * (by_axis_origin["z"] + by_axis_pipe["z"] + by_axis_destination["z"])
             new_part_coordinates[2] = new_part_coordinates[2] + distance
