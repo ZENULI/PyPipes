@@ -5,6 +5,7 @@ class Model3D:
 
     def __init__(self, mesh: o3d.geometry.TriangleMesh) -> None:
         self._mesh = mesh
+        self._mesh.compute_vertex_normals()
 
     @property
     def mesh(self) -> o3d.geometry.TriangleMesh:

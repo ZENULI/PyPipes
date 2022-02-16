@@ -12,15 +12,9 @@ import open3d as o3d
 class PipelineConstructor:
 
     def __init__(self):
-        resource_dir = pathlib.Path(__file__).parent.parent.parent / "resources" / "3Dmodels"
-
         self._part_dictionary = {part_type: part_type.part_model_file() for part_type in PartType}
-        self._pipes = [resource_dir / "pipe1.obj", resource_dir / "pipe2.obj", resource_dir / "pipe3.obj"]
 
     def construct_pipeline(self, pipeline: PipelineGraph) -> PipelineModel:
-        def get_pipe():
-            return self._pipes[random.randrange(0, len(self._pipes))]
-
         graph = pipeline.graph
         model = PipelineModel()
 

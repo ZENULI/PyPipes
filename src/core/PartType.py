@@ -3,44 +3,81 @@ import random
 import pathlib
 
 
-def random_part_type():
-    score = random.randrange(0, 100)
-
-    if 0 <= score < 40:
-        return PartType.ANGLE
-    elif 40 <= score < 80:
-        return PartType.FLANGE
-    elif 80 <= score < 90:
-        return PartType.TEE
-    elif 90 <= score < 100:
-        return PartType.CROSS
-
-
 class PartType(Enum):
 
     ANGLE = 1
     TEE = 2
-    FLANGE = 3
-    CROSS = 4
+    CROSS = 3
 
-    def number_of_connections(self) -> int:
+    PIPE_1 = 4
+    PIPE_2 = 5
+    PIPE_3 = 6
+    PIPE_4 = 7
+
+    def distance_per_axis(self) -> dict:
         if self == self.ANGLE:
-            return 2
+            return {'x': 0.87039, 'y': 0.5, 'z': 0.910665}
         elif self == self.TEE:
-            return 3
-        elif self == self.FLANGE:
-            return 2
+            return {'x': 0.84697, 'y': 0.5, 'z': 1.486665}
         elif self == self.CROSS:
-            return 4
+            return {'x': 1.26615, 'y': 0.5, 'z': 1.486665}
+        elif self == self.PIPE_1:
+            return {'x': 0.5, 'y': 0.5, 'z': 1.784005}
+        elif self == self.PIPE_2:
+            return {'x': 0.5, 'y': 0.5, 'z': 2.97334}
+        elif self == self.PIPE_3:
+            return {'x': 0.5, 'y': 0.5, 'z': 5.6493}
+        elif self == self.PIPE_4:
+            return {'x': 0.5, 'y': 0.5, 'z': 2.97334}
+
+    def connections_per_axis(self) -> list:
+        if self == self.ANGLE:
+            return ["-x", "-z"]
+        elif self == self.TEE:
+            return ["-x", "z", "-z"]
+        elif self == self.CROSS:
+            return ["x", "-x", "z", "-z"]
+        else:
+            return ["z", "-z"]
 
     def part_model_file(self) -> pathlib.Path:
         resource_dir = pathlib.Path(__file__).parent.parent.parent / "resources" / "3Dmodels"
 
         if self == self.ANGLE:
-            return resource_dir / "coude.obj"
+            return resource_dir / "coude.ply"
         elif self == self.TEE:
-            return resource_dir / "te.obj"
-        elif self == self.FLANGE:
-            return resource_dir / "pipe4.obj"
+            return resource_dir / "te.ply"
         elif self == self.CROSS:
-            return resource_dir / "cross.obj"
+            return resource_dir / "cross.ply"
+        elif self == self.PIPE_1:
+            return resource_dir / "pipe1.ply"
+        elif self == self.PIPE_2:
+            return resource_dir / "pipe2.ply"
+        elif self == self.PIPE_3:
+            return resource_dir / "pipe3.ply"
+        elif self == self.PIPE_4:
+            return resource_dir / "pipe4.ply"
+
+
+def random_part_type() -> PartType:
+    score = random.randrange(0, 100)
+
+    if 0 <= score < 40:
+        return PartType.ANGLE
+    elif 40 <= score < 80:
+        return PartType.TEE
+    elif 80 <= score < 100:
+        return PartType.CROSS
+
+
+def random_pipe_type() -> PartType:
+    score = random.randrange(0, 100)
+
+    if 0 <= score < 25:
+        return PartType.PIPE_1
+    elif 25 <= score < 50:
+        return PartType.PIPE_2
+    elif 50 <= score < 75:
+        return PartType.PIPE_3
+    elif 75 <= score < 100:
+        return PartType.PIPE_4

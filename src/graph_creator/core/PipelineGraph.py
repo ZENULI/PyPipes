@@ -21,7 +21,7 @@ class PipelinePart:
 
     @part_type.setter
     def part_type(self, value: PartType) -> None:
-        self._part_type = PartType
+        self._part_type = value
 
     @property
     def coordinates(self) -> ndarray:
@@ -56,41 +56,8 @@ class PipelineGraph:
     def add_node(self, index: int, p: PipelinePart) -> None:
         self._graph.add_node(index, type=p.part_type, coordinates=p.coordinates, direction=p.direction, radius=p.radius)
 
-    def add_edge(self, start: int, end: int, weight: float) -> None:
-        self._graph.add_edge(start, end, weight=weight)
-
-    def complete(self) -> None:
-        nb_nodes = self._graph.number_of_nodes()
-
-        def neighbours(node):
-            return self._graph.degree[node]
-
-        def expected_neighbours(node):
-            return self._graph.nodes[node]['type'].number_of_connections()
-
-        for i in range(0, nb_nodes):
-            start_coordinates = self._graph.nodes[i]['coordinates']
-
-            candidates = [c for c in range(0, nb_nodes) if c != i]
-            random.shuffle(candidates)
-
-            neigh = neighbours(i)
-            expected = expected_neighbours(i)
-
-            while neigh < expected:
-                connection = None
-                for candidate in candidates:
-                    if neighbours(candidate) < expected_neighbours(candidate):
-                        connection = candidate
-                        break
-
-                if connection:
-                    end_coordinates = self._graph.nodes[connection]['coordinates']
-                    distance = np.linalg.norm(start_coordinates - end_coordinates)
-
-                    self._graph.add_edge(i, connection, weight=distance)
-
-                neigh += 1
+    def add_edge(self, start: int, end: int) -> None:
+        self._graph.add_edge(start, end)
 
     def visualize(self) -> None:
         nx.draw(self._graph)
