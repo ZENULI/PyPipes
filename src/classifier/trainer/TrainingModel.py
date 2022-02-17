@@ -46,6 +46,18 @@ class TrainingModel:
 
         self._point_cloud_unlabelled.clear_labels()
 
+    @property
+    def point_cloud_model(self):
+        return self._point_cloud_model
+
+    @property
+    def point_cloud_labelled(self):
+        return self._point_cloud_labelled
+
+    @@property
+    def point_cloud_unlabelled(self):
+        return self._point_cloud_unlabelled
+
     def visualize(self):
         o3d.visualization.draw_geometries([self._point_cloud_model])
 
