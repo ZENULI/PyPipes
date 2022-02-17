@@ -16,11 +16,11 @@ class PartType(Enum):
 
     def distance_per_axis(self) -> dict:
         if self == self.ANGLE:
-            return {'x': 0.87039, 'y': 0.5, 'z': 0.910665}
+            return {'x': 1.21041, 'y': 0.5, 'z': 1.21041}
         elif self == self.TEE:
-            return {'x': 0.84697, 'y': 0.5, 'z': 1.486665}
+            return {'x': 0.64697, 'y': 0.5, 'z': 1.286665}
         elif self == self.CROSS:
-            return {'x': 1.26615, 'y': 0.5, 'z': 1.486665}
+            return {'x': 1.06615, 'y': 0.5, 'z': 1.286665}
         elif self == self.PIPE_1:
             return {'x': 0.5, 'y': 0.5, 'z': 1.784005}
         elif self == self.PIPE_2:
@@ -32,7 +32,7 @@ class PartType(Enum):
 
     def connections_per_axis(self) -> list:
         if self == self.ANGLE:
-            return ["-x", "-z"]
+            return ["x", "-z"]
         elif self == self.TEE:
             return ["-x", "z", "-z"]
         elif self == self.CROSS:
