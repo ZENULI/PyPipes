@@ -14,3 +14,7 @@ class PointCloud:
 
     def is_classified(self) -> bool:
         return len(self.points) > 0 and self.points[0].is_classified()
+
+    def clear_labels(self) -> None:
+        for point in self._points:
+            point.clear_labels()

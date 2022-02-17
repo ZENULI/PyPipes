@@ -10,6 +10,13 @@ class Point:
         self._y = y
         self._z = z
 
+        self._center = None
+        self._part_type = None
+        self._radius = None
+        self._direction = None
+
+    def clear_labels(self) -> None:
+        self._center = None
         self._part_type = None
         self._radius = None
         self._direction = None
@@ -25,6 +32,14 @@ class Point:
     @property
     def z(self) -> float:
         return self._z
+
+    @property
+    def center(self) -> ndarray:
+        return self._center
+
+    @center.setter
+    def center(self, value: ndarray) -> None:
+        self._center = value
 
     @property
     def part_type(self) -> PartType:
@@ -51,4 +66,4 @@ class Point:
         self._direction = value
 
     def is_classified(self) -> bool:
-        return self._part_type and self._radius and self._direction
+        return self._center and self._part_type and self._radius and self._direction
