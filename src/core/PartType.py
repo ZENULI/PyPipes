@@ -1,6 +1,8 @@
+import json
 from enum import Enum
 import random
 import pathlib
+import numpy as np
 
 
 class PartType(Enum):
@@ -57,6 +59,23 @@ class PartType(Enum):
             return resource_dir / "pipe3.ply"
         elif self == self.PIPE_4:
             return resource_dir / "pipe4.ply"
+
+
+class EnumEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, PartType):
+            return {"__enum__": str(o)}
+        if isinstance(o, np.int32):
+            return int(o)
+        return json.JSONEncoder.default(self, o)
+
+
+def as_part_type(d):
+    if "__enum__" in d:
+        name, member = d["__enum__"].split(".")
+        return getattr(PartType, member)
+    else:
+        return d
 
 
 def random_part_type() -> PartType:
