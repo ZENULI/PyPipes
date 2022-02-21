@@ -54,7 +54,7 @@ class TrainingModel:
     def point_cloud_labelled(self):
         return self._point_cloud_labelled
 
-    @@property
+    @property
     def point_cloud_unlabelled(self):
         return self._point_cloud_unlabelled
 
