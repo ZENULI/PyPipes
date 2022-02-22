@@ -249,83 +249,83 @@ class GraphCreator:
 
                 class_pcd = o3d.geometry.PointCloud()
                 class_pcd.points = o3d.utility.Vector3dVector(array_points)
+                    
+                # DBSCAN sur ce nuage (doit contenir au moins min_points et à moins de 2 m de distance)
+                with o3d.utility.VerbosityContextManager(
+                        o3d.utility.VerbosityLevel.Debug) as cm:
+                    labels_ = np.array(
+                        class_pcd.cluster_dbscan(eps=1.1, min_points=15, print_progress=True))
+                
+                max_label = labels_.max()
+
+                print(f"label {str(label)}  has {max_label} clusters of lengths :")
+
+                colors = plt.get_cmap("tab20")(labels_ / (max_label if max_label > 0 else 1))
+                colors[labels_ < 0] = 0
+                class_pcd.colors = o3d.utility.Vector3dVector(colors[:, :3])
+
+                #o3d.visualization.draw_geometries([class_pcd])
                 class_pcd_path = resource_dir / save_path /  (str(label) + "_pcd.ply")
                 o3d.io.write_point_cloud(str(class_pcd_path), class_pcd)
-            
-            # DBSCAN sur ce nuage (doit contenir au moins min_points et à moins de 2 m de distance)
-            with o3d.utility.VerbosityContextManager(
-                    o3d.utility.VerbosityLevel.Debug) as cm:
-                labels_ = np.array(
-                    class_pcd.cluster_dbscan(eps=2, min_points=10, print_progress=True))
-            
-            max_label = labels_.max()
-
-            print(f"label {str(label)}  has {max_label} clusters of lengths :")
-
-            colors = plt.get_cmap("tab20")(labels_ / (max_label if max_label > 0 else 1))
-            colors[labels_ < 0] = 0
-            class_pcd.colors = o3d.utility.Vector3dVector(colors[:, :3])
-
-            #o3d.visualization.draw_geometries([class_pcd])
 
             
-            # sur chaque cluster de ce nuage :
-            for k in range(0, max_label) :
+                # sur chaque cluster de ce nuage :
+                for k in range(0, max_label + 1) :
+                    
+                    cluster_types = []
+                    cluster_x = []
+                    cluster_y = []
+                    cluster_z = []
+                    cluster_radius = []
+                    cluster_vx = []
+                    cluster_vy = []
+                    cluster_vz = []
+
+                    length_cluster = 0
+                    #list_pts_cluster = []
+
+                    for j in range(0, len(class_pcd.points)): # écrire en 1 ligne             
+
+                        point = class_list_points[j]
+
+                        if (labels_[j] == k) : # selection des points du cluster
+
+                            #list_pts_cluster.append(point)
+            
+                            cluster_types.append(point.part_type)
+
+                            cluster_x.append(point.center[0])
+                            cluster_y.append(point.center[1])
+                            cluster_z.append(point.center[2])
+
+                            cluster_vx.append(point.direction[0])
+                            cluster_vy.append(point.direction[1])
+                            cluster_vz.append(point.direction[2])
+
+                            cluster_radius.append(point.radius)
+
+                            length_cluster += 1
+
+                    print(length_cluster)
+                    #cluster_pcd = o3d.geometry.PointCloud()
+                    #cluster_pcd.points = o3d.utility.Vector3dVector(np.array(list_pts_cluster))      
+                    #o3d.visualization.draw_geometries([cluster_pcd])  
+                    
+
+                    # récupérer l'orientation la + courante (moyenne ? mediane en chaque coordonnée?)
+                    new_center = [most_frequent(cluster_x), most_frequent(cluster_y), most_frequent(cluster_z)]
+
+                    # récupérer la position du centre la + courante (moyenne ? mediane en chaque coordonnée?)
+                    new_direction = [most_frequent(cluster_vx), most_frequent(cluster_vy), most_frequent(cluster_vz)]
+
+                    new_type = most_frequent(cluster_types)
+                    new_radius = most_frequent(cluster_radius) # !
+                    
+                    # ajouter la part correspondante au cluster
+                    new_part = PipelinePart(new_type, new_center, new_direction, 1)
+                    graph.add_node(part_index, new_part)            
+                    part_index += 1                     
                 
-                cluster_types = []
-                cluster_x = []
-                cluster_y = []
-                cluster_z = []
-                cluster_radius = []
-                cluster_vx = []
-                cluster_vy = []
-                cluster_vz = []
-
-                length_cluster = 0
-                #list_pts_cluster = []
-
-                for j in range(0, len(class_pcd.points)): # écrire en 1 ligne             
-
-                    point = class_list_points[j]
-
-                    if (labels_[j] == k) : # selection des points du cluster
-
-                        #list_pts_cluster.append(point)
-           
-                        cluster_types.append(point.part_type)
-
-                        cluster_x.append(point.center[0])
-                        cluster_y.append(point.center[1])
-                        cluster_z.append(point.center[2])
-
-                        cluster_vx.append(point.direction[0])
-                        cluster_vy.append(point.direction[1])
-                        cluster_vz.append(point.direction[2])
-
-                        cluster_radius.append(point.radius)
-
-                        length_cluster += 1
-
-                print(length_cluster)
-                #cluster_pcd = o3d.geometry.PointCloud()
-                #cluster_pcd.points = o3d.utility.Vector3dVector(np.array(list_pts_cluster))      
-                #o3d.visualization.draw_geometries([cluster_pcd])  
-                   
-
-                # récupérer l'orientation la + courante (moyenne ? mediane en chaque coordonnée?)
-                new_center = [most_frequent(cluster_x), most_frequent(cluster_y), most_frequent(cluster_z)]
-
-                # récupérer la position du centre la + courante (moyenne ? mediane en chaque coordonnée?)
-                new_direction = [most_frequent(cluster_vx), most_frequent(cluster_vy), most_frequent(cluster_vz)]
-
-                new_type = most_frequent(cluster_types)
-                new_radius = most_frequent(cluster_radius) # !
-                
-                # ajouter la part correspondante au cluster
-                new_part = PipelinePart(new_type, new_center, new_direction, 1)
-                graph.add_node(part_index, new_part)            
-                part_index += 1                     
-             
 
 
         '''
