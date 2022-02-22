@@ -66,4 +66,5 @@ class Point:
         self._direction = value
 
     def is_classified(self) -> bool:
-        return self._center and self._part_type and self._radius and self._direction
+        return self._center is not None and self._part_type is not None and self._radius is not None and \
+               self._direction is not None

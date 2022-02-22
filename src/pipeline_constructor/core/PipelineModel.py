@@ -20,6 +20,9 @@ class PipelineModel:
     def compute_normals(self):
         self._main_mesh.compute_vertex_normals()
 
+    def save(self, filepath: pathlib.Path) -> None:
+        o3d.io.write_triangle_mesh(str(filepath) + ".ply", self._main_mesh)
+
     def visualize(self) -> None:
         box = self._main_mesh.get_axis_aligned_bounding_box()
         box.color = (1, 0, 0)
