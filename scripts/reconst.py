@@ -13,6 +13,13 @@ from src.pipeline_constructor.PipelineConstructor import PipelineConstructor
 
 from copy import deepcopy
 
+save_path = 'scripts/output'
+resource_dir = pathlib.Path(__file__).parent.parent.parent
+
+file_path = resource_dir / save_path / ("reconst_classif.json")
+mesh_path = resource_dir / save_path / ("reconst_mesh.ply")
+pcd_path = resource_dir / save_path / ("reconst_pcd.ply")
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generates a random pipeline and try to reconstruct it after shuffling")
@@ -47,6 +54,10 @@ if __name__ == '__main__':
     visualise_result = args.visualiseResult
 
     model = create_training_model(nb_parts=nb_parts, nb_points_per_mesh=sampling)
+
+    model.save_model(str(file_path))
+    model.save_mesh(str(mesh_path))
+    model.save_pcd(str(pcd_path))
 
     classification = deepcopy(model.point_cloud_unlabelled)
 

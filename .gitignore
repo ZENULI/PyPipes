@@ -13,7 +13,7 @@ __pycache__/
 
 datasets/
 resources/results/
-
+scripts/output
 
 # C extensions
 *.so
