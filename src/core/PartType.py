@@ -65,7 +65,7 @@ class EnumEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, PartType):
             return {"__enum__": str(o)}
-        if isinstance(o, np.int32):
+        if (isinstance(o, np.int32) or isinstance(o, np.int64)):
             return int(o)
         return json.JSONEncoder.default(self, o)
 

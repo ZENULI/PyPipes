@@ -11,6 +11,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+datasets/
+resources/results/
+
+
 # C extensions
 *.so
 

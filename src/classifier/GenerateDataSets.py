@@ -17,11 +17,12 @@ if __name__ == '__main__':
 
         model.save_model(str(file_path))'''''
 
-    for i in range(0, 300):
+    for i in range(0, 30):
         file_path = resource_dir / "tests" / ("TrainingData_" + str(i) + ".json")
 
-        nb_parts = random.randrange(50, 150)
-        sampling = random.randrange(50, 150)
+        nb_parts = random.randrange(5, 15)
+        #sampling = random.randrange(500, 1500)
+        sampling = 1048
 
         model = create_training_model(nb_parts=nb_parts, nb_points_per_mesh=sampling)
 

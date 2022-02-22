@@ -19,6 +19,7 @@ class TrainingModel:
     def __init__(self, pipeline_graph: PipelineGraph=None, nb_points_per_mesh: int = 50, json_file: str = None) -> None:
         resource_dir = pathlib.Path(__file__).parent.parent.parent.parent / "resources" / "3Dmodels"
         self._point_cloud_model = o3d.io.read_point_cloud(str(resource_dir / "empty.ply"))
+        self._mesh = o3d.io.read_triangle_mesh(str(resource_dir / "empty.ply"))
 
         if json_file is not None:
             with open(json_file) as file:
@@ -75,6 +76,7 @@ class TrainingModel:
                     all_points.append(label_point)
 
                 self._point_cloud_model += point_cloud
+                self._mesh += mesh
 
             self._point_cloud_unlabelled = PointCloud(all_points)
             self._point_cloud_labelled = PointCloud(deepcopy(all_points))
@@ -95,6 +97,13 @@ class TrainingModel:
 
     def visualize(self):
         o3d.visualization.draw_geometries([self._point_cloud_model])
+
+    def save_mesh(self,file_path: str) -> None:
+        o3d.io.write_triangle_mesh(file_path, self._mesh)
+
+    def save_pcd(self,file_path: str) -> None:
+        o3d.io.write_point_cloud(file_path, self._point_cloud_model)  
+
 
     def save_model(self, file_path: str) -> None:
         data = []
