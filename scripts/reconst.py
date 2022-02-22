@@ -16,9 +16,13 @@ from copy import deepcopy
 save_path = 'scripts/output'
 resource_dir = pathlib.Path(__file__).parent.parent.parent
 
-file_path = resource_dir / save_path / ("reconst_classif.json")
-mesh_path = resource_dir / save_path / ("reconst_mesh.ply")
-pcd_path = resource_dir / save_path / ("reconst_pcd.ply")
+pcd_truth_path = resource_dir / save_path / ("pcd_truth.ply")
+labels_truth_path = resource_dir / save_path / ("labels_truth.json")
+mesh_truth_path = resource_dir / save_path / ("mesh_truth.ply")
+
+labels_classif_path = resource_dir / save_path / ("labels_classif.json")
+mesh_reconst_path = resource_dir / save_path / ("mesh_reconst")
+
 
 
 if __name__ == '__main__':
@@ -55,12 +59,13 @@ if __name__ == '__main__':
 
     model = create_training_model(nb_parts=nb_parts, nb_points_per_mesh=sampling)
 
-    model.save_model(str(file_path))
-    model.save_mesh(str(mesh_path))
-    model.save_pcd(str(pcd_path))
+    model.save_model(str(labels_truth_path))
+    model.save_mesh(str(mesh_truth_path))
+    model.save_pcd(str(pcd_truth_path))
 
     classification = deepcopy(model.point_cloud_unlabelled)
 
+    # Simulate classification
     for i in range(0, len(classification.points)):
         ground_truth = model.point_cloud_labelled.points[i]
 
@@ -85,14 +90,35 @@ if __name__ == '__main__':
         classification.points[i].center = ground_truth.center + ground_truth.center * center_error
         classification.points[i].direction = ground_truth.direction + ground_truth.direction * direction_error
         classification.points[i].radius = 1.
-
+   
+    
     graph_creator = GraphCreator()
     pipeline_constructor = PipelineConstructor()
+ 
+    #### à supprimer et remplacer par :  
+    #reconstructed_model.save_model(str(labels_classif_path)) ##############
+    import json
+    from src.core.PartType import EnumEncoder, as_part_type
+    data = []
+    for point in classification.points:
+        data.append({
+            "point_coordinates": [point.x, point.y, point.z],
+            "part_center": [point.center[0], point.center[1], point.center[2]],
+            "part_type": point.part_type,
+            "direction": [point.direction[0], point.direction[1], point.direction[2]],
+            "radius": point.radius
+        })
+    json_data = {"points": data}
+    json_string = json.dumps(json_data, cls=EnumEncoder)
 
+    with open(str(labels_classif_path), 'w') as outfile:
+        json.dump(json_string, outfile)
+    #########################################################################
+    
     reconstructed_graph = graph_creator.build_graph(classification)
-    reconstructed_model = pipeline_constructor.construct_pipeline(reconstructed_graph)
 
-    reconstructed_model.save(pathlib.Path(__file__).parent / file_name)
+    reconstructed_model = pipeline_constructor.construct_pipeline(reconstructed_graph)
+    reconstructed_model.save(str(mesh_reconst_path))
 
     if visualise_result:
         reconstructed_model.visualize()
