@@ -68,8 +68,8 @@ if __name__ == '__main__':
         center_error = random.uniform(-simulated_center_error, simulated_center_error)
         direction_error = random.uniform(-simulated_direction_error, simulated_direction_error)
 
-        classification.points[i].center = ground_truth.center * center_error
-        classification.points[i].direction = ground_truth.direction * direction_error
+        classification.points[i].center = ground_truth.center + ground_truth.center * center_error
+        classification.points[i].direction = ground_truth.direction + ground_truth.direction * direction_error
         classification.points[i].radius = 1.
 
     graph_creator = GraphCreator()
