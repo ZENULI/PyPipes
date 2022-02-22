@@ -6,6 +6,40 @@ from src.core.PartType import PartType
 import open3d as o3d
 import numpy as np
 
+from scipy.spatial.transform import Rotation as R
+
+
+###########
+
+def compute_rotation_matrix(axis, theta):
+
+    '''    
+    Return the rotation matrix associated with counterclockwise rotation about
+    the given axis by theta radians.
+    https://en.wikipedia.org/wiki/Euler%E2%80%93Rodrigues_formula
+
+    example : 
+
+        >>> v = [3, 5, 0]
+        >>> axis = [4, 4, 1]
+        >>> theta = 1.2 
+
+        >>> print(np.dot(rotation_matrix(axis, theta), v)) 
+        # [ 2.74911638  4.77180932  1.91629719]
+    '''
+
+    axis = np.asarray(axis)
+    axis = axis / math.sqrt(np.dot(axis, axis))
+    a = math.cos(theta / 2.0)
+    b, c, d = -axis * math.sin(theta / 2.0)
+    aa, bb, cc, dd = a * a, b * b, c * c, d * d
+    bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
+    return np.array([[aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac)],
+                    [2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)],
+                    [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]])
+
+#########
+
 
 class PipelineConstructor:
 
@@ -39,8 +73,8 @@ class PipelineConstructor:
 
         rotation = o3d.geometry.get_rotation_matrix_from_xyz(direction)
 
-        mesh.translate([0., 0., 0.], relative=True)
-        mesh.rotate(rotation, center=[0., 0., 0.])
-        mesh.translate(coordinates, relative=True)
+        mesh.translate([0., 0., 0.], relative=True)            
+        mesh.rotate(rotation, center=[0., 0., 0.])           
+        mesh.translate(coordinates, relative=True)       
 
         return mesh

@@ -9,7 +9,7 @@ from src.core.PartType import PartType
 
 class PipelinePart:
 
-    def __init__(self, part_type: PartType, coordinates: ndarray, direction: ndarray, radius: float) -> None:
+    def __init__(self, part_type: PartType, coordinates: ndarray, direction: ndarray,radius: float) -> None:
         self._part_type = part_type
         self._coordinates = coordinates
         self._direction = direction
