@@ -20,7 +20,7 @@ class PartType(Enum):
         if self == self.ANGLE:
             return {'x': 1.21041, 'y': 0.5, 'z': 1.21041}
         elif self == self.TEE:
-            return {'x': 0.64697, 'y': 0.5, 'z': 1.286665}
+            return {'x': 1.286665, 'y': 0.5, 'z': 1.286665}
         elif self == self.CROSS:
             return {'x': 1.06615, 'y': 0.5, 'z': 1.286665}
         elif self == self.PIPE_1:
