@@ -208,6 +208,8 @@ class GraphCreator:
     def build_graph(self, point_cloud: PointCloud) -> PipelineGraph:
         assert point_cloud.is_classified()        
 
+        pipeline_constructor = PipelineConstructor()
+
         ### pas ici 
         import pathlib
         import matplotlib.pyplot as plt
@@ -254,14 +256,14 @@ class GraphCreator:
                 with o3d.utility.VerbosityContextManager(
                         o3d.utility.VerbosityLevel.Debug) as cm:
                     labels_ = np.array(
-                        class_pcd.cluster_dbscan(eps=1.1, min_points=15, print_progress=True))
+                        class_pcd.cluster_dbscan(eps=1, min_points=11, print_progress=True))
                 
                 max_label = labels_.max()
 
                 print(f"label {str(label)}  has {max_label} clusters of lengths :")
 
                 colors = plt.get_cmap("tab20")(labels_ / (max_label if max_label > 0 else 1))
-                colors[labels_ < 0] = 0
+                #colors[labels_ < 0] = 0 
                 class_pcd.colors = o3d.utility.Vector3dVector(colors[:, :3])
 
                 #o3d.visualization.draw_geometries([class_pcd])
@@ -282,7 +284,7 @@ class GraphCreator:
                     cluster_vz = []
 
                     length_cluster = 0
-                    #list_pts_cluster = []
+                    list_pts_cluster = []
 
                     for j in range(0, len(class_pcd.points)): # écrire en 1 ligne             
 
@@ -290,7 +292,7 @@ class GraphCreator:
 
                         if (labels_[j] == k) : # selection des points du cluster
 
-                            #list_pts_cluster.append(point)
+                            list_pts_cluster.append([point.x, point.y, point.z])  
             
                             cluster_types.append(point.part_type)
 
@@ -307,8 +309,8 @@ class GraphCreator:
                             length_cluster += 1
 
                     print(length_cluster)
-                    #cluster_pcd = o3d.geometry.PointCloud()
-                    #cluster_pcd.points = o3d.utility.Vector3dVector(np.array(list_pts_cluster))      
+                    cluster_pcd = o3d.geometry.PointCloud()
+                    cluster_pcd.points = o3d.utility.Vector3dVector(np.array(list_pts_cluster))      
                     #o3d.visualization.draw_geometries([cluster_pcd])  
                     
 
@@ -321,11 +323,45 @@ class GraphCreator:
                     new_type = most_frequent(cluster_types)
                     new_radius = most_frequent(cluster_radius) # !
                     
-                    # ajouter la part correspondante au cluster
-                    new_part = PipelinePart(new_type, new_center, new_direction, 1)
+                    # créer la part correspondante 
+                    new_part = PipelinePart(new_type, new_center, new_direction, 1)             
+
+                    #ajouter à un graph et construire le mesh pour comparer après l'icp
+
+                    
+                    # icp 
+                    threshold = 0.02
+                    part_mesh = pipeline_constructor.create_mesh_from_part(new_part)
+                    
+                    
+                    trans_init = np.asarray([[0.862, 0.011, -0.507, 0.5],
+                                            [-0.139, 0.967, -0.215, 0.7],
+                                            [0.487, 0.255, 0.835, -1.4], [0.0, 0.0, 0.0, 1.0]])
+                    
+                    #trans_init = np.identity(4)
+
+                    part_pcd = part_mesh.sample_points_uniformly(number_of_points=10000)
+
+                    part_pcd.paint_uniform_color([1, 0, 0])
+                    cluster_pcd.paint_uniform_color([0, 1, 0])
+                    cluster_pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
+
+                    reg_p2p = o3d.pipelines.registration.registration_icp(
+                        part_pcd, cluster_pcd, threshold, trans_init,
+                        o3d.pipelines.registration.TransformationEstimationPointToPlane(),
+                        o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=2000))
+                    print(reg_p2p)
+                    print(reg_p2p.transformation - trans_init)
+
+                    o3d.visualization.draw_geometries([cluster_pcd, part_pcd])  
+
+                    part_mesh.transform(reg_p2p.transformation)
+                    
+
+
+                    # ajouter la part au graphe
                     graph.add_node(part_index, new_part)            
-                    part_index += 1                     
-                
+                    part_index += 1     
 
 
         '''

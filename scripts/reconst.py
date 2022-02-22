@@ -52,7 +52,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generates a random pipeline and try to reconstruct it after shuffling")
 
     parser.add_argument('--nbParts', type=int, default=10, help='Number of parts used in the generated Pipeline')
-    parser.add_argument('--sampling', type=int, default=100, help='Number of points generated per pipeline part')
+    parser.add_argument('--sampling', type=int, default=10000, help='Number of points generated per pipeline part')
     parser.add_argument('--simulatedAccuracy', type=float, default=0.95,
                         help='Simulated classification accuracy (Percentage between 0 and 1)')
     parser.add_argument('--simulatedCenterError', type=float, default=0.05,
@@ -119,10 +119,6 @@ if __name__ == '__main__':
         classification.points[i].radius = 1.
    
     labelled_pcd_write(classification.points, str(labels_classif_path)) 
-
-
-
-
 
     graph_creator = GraphCreator()
     pipeline_constructor = PipelineConstructor()
