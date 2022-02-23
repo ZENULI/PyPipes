@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--nbParts', type=int, default=10, help='Number of parts used in the generated Pipeline')
     parser.add_argument('--sampling', type=int, default=100, help='Number of points generated per pipeline part')
-    parser.add_argument('--simulatedAccuracy', type=float, default=0.50,
+    parser.add_argument('--simulatedAccuracy', type=float, default=0.95,
                         help='Simulated classification accuracy (Percentage between 0 and 1)')
     parser.add_argument('--simulatedCenterError', type=float, default=0.05,
                         help='Simulated error on part center characteristic (Percentage between 0 and 1)')
@@ -60,6 +60,8 @@ if __name__ == '__main__':
                         help="Name of the file in which to store the reconstructed pipeline")
     parser.add_argument('--visualiseResult', type=bool, default=True,
                         help='If true, visualise the reconstructed pipeline')
+    parser.add_argument('--saveFormat', type=str, default='.ply',
+                        help='Format to use to save the reconstructed model (.ply or .obj)')
 
     args = parser.parse_args()
 
@@ -119,7 +121,7 @@ if __name__ == '__main__':
     
     reconstructed_graph = graph_creator.build_graph(classification)
     reconstructed_model = pipeline_constructor.construct_pipeline(reconstructed_graph)
-    reconstructed_model.save(mesh_reconst_path)
+    reconstructed_model.save(mesh_reconst_path, extension=args.saveFormat)
 
     if visualise_result:
         reconstructed_model.visualize()
