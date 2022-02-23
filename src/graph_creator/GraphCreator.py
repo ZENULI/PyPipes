@@ -205,7 +205,11 @@ class GraphCreator:
 
         return pipe, new_part
 
-    def build_graph(self, point_cloud: PointCloud) -> PipelineGraph:
+
+
+
+    def build_graph(self, point_cloud: PointCloud) :
+    #def build_graph(self, point_cloud: PointCloud) -> PipelineGraph:
         assert point_cloud.is_classified()        
 
         pipeline_constructor = PipelineConstructor()
@@ -215,6 +219,8 @@ class GraphCreator:
         import matplotlib.pyplot as plt
         save_path = 'scripts/output'
         resource_dir = pathlib.Path(__file__).parent.parent.parent
+        from src.pipeline_constructor.core.PipelineModel import PipelineModel
+        from src.pipeline_constructor.core.Model3D import Model3D
 
         ANGLE = 1
         TEE = 2
@@ -226,11 +232,13 @@ class GraphCreator:
 
         labels = [PartType.ANGLE, PartType.TEE, PartType.CROSS, PartType.PIPE_1, PartType.PIPE_2, PartType.PIPE_3, PartType.PIPE_4]
         part_index = 0
+        model_mesh = PipelineModel().mesh
         ###
 
         # Partie 1 : GENERATION DU GRAPHE
 
         graph = PipelineGraph()
+
 
         # Pour chaque label existant dans le dico 
         for label in labels :
@@ -328,19 +336,42 @@ class GraphCreator:
 
                     #ajouter à un graph et construire le mesh pour comparer après l'icp
 
-                    
+                    '''
+                    # ajouter la part au graphe
+                    graph.add_node(part_index, new_part)            
+                    part_index += 1     
+                    '''
+
+
+                    '''
+                    # Partie 2 : GENERATION DE L'ARBRE avec MST etc ? (dans ce cas besoin d'un clustering + fin)
+                    # 
+                    # 
+                    #                     
+                    '''
+
+                    '''
+                    return graph
+                    '''
+
+
+
+                    #########################
                     # icp 
-                    threshold = 0.02
+                    threshold = 0.015
                     part_mesh = pipeline_constructor.create_mesh_from_part(new_part)
                     
                     
-                    trans_init = np.asarray([[0.862, 0.011, -0.507, 0.5],
-                                            [-0.139, 0.967, -0.215, 0.7],
-                                            [0.487, 0.255, 0.835, -1.4], [0.0, 0.0, 0.0, 1.0]])
+                    #trans_init = np.asarray([[0.862, 0.011, -0.507, 0.5],
+                    #                        [-0.139, 0.967, -0.215, 0.7],
+                    #                        [0.487, 0.255, 0.835, -1.4], [0.0, 0.0, 0.0, 1.0]])
                     
-                    #trans_init = np.identity(4)
+                    trans_init = np.eye(4)
 
-                    part_pcd = part_mesh.sample_points_uniformly(number_of_points=10000)
+                    #part_pcd = part_mesh.sample_points_uniformly(number_of_points=10000)
+                    temp_path = resource_dir / save_path / ("temp.ply")
+                    o3d.io.write_triangle_mesh(str(temp_path), part_mesh)
+                    part_pcd = o3d.io.read_point_cloud(str(temp_path))
 
                     part_pcd.paint_uniform_color([1, 0, 0])
                     cluster_pcd.paint_uniform_color([0, 1, 0])
@@ -349,27 +380,34 @@ class GraphCreator:
                     reg_p2p = o3d.pipelines.registration.registration_icp(
                         part_pcd, cluster_pcd, threshold, trans_init,
                         o3d.pipelines.registration.TransformationEstimationPointToPlane(),
-                        o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=2000))
+                        o3d.pipelines.registration.ICPConvergenceCriteria(relative_fitness=0.0000001,
+                                       relative_rmse=0.0000001, max_iteration=2000))
                     print(reg_p2p)
                     print(reg_p2p.transformation - trans_init)
 
-                    o3d.visualization.draw_geometries([cluster_pcd, part_pcd])  
+                    #o3d.visualization.draw_geometries([cluster_pcd, part_mesh])  
 
                     part_mesh.transform(reg_p2p.transformation)
-                    
+
+                    #o3d.visualization.draw_geometries([cluster_pcd, part_mesh])  
+
+                    ##
 
 
-                    # ajouter la part au graphe
-                    graph.add_node(part_index, new_part)            
-                    part_index += 1     
+
+                    model_mesh += part_mesh
+
+        model_mesh.compute_vertex_normals()
+
+        #o3d.visualization.draw_geometries([model_mesh]) 
+
+        return model_mesh
 
 
-        '''
-        # Partie 2 : GENERATION DE L'ARBRE avec MST etc ? (dans ce cas besoin d'un clustering + fin)
-        # 
-        # 
-        #                     
-        '''
+                    ########################
 
 
-        return graph
+
+
+
+

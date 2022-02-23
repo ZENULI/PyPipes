@@ -52,7 +52,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generates a random pipeline and try to reconstruct it after shuffling")
 
     parser.add_argument('--nbParts', type=int, default=10, help='Number of parts used in the generated Pipeline')
-    parser.add_argument('--sampling', type=int, default=10000, help='Number of points generated per pipeline part')
+    parser.add_argument('--sampling', type=int, default=100, help='Number of points generated per pipeline part')
     parser.add_argument('--simulatedAccuracy', type=float, default=0.95,
                         help='Simulated classification accuracy (Percentage between 0 and 1)')
     parser.add_argument('--simulatedCenterError', type=float, default=0.05,
@@ -123,11 +123,21 @@ if __name__ == '__main__':
     graph_creator = GraphCreator()
     pipeline_constructor = PipelineConstructor()
     
-    reconstructed_graph = graph_creator.build_graph(classification)
-    reconstructed_model = pipeline_constructor.construct_pipeline(reconstructed_graph)
-    reconstructed_model.save(str(mesh_reconst_path))
+    #reconstructed_graph = 
+    #reconstructed_model = pipeline_constructor.construct_pipeline(reconstructed_graph)
+    #reconstructed_model = graph_creator.build_graph(classification)
 
-    if visualise_result:
-        reconstructed_model.visualize()
+    import open3d as o3d
+    reconst_mesh = graph_creator.build_graph(classification)
+    o3d.io.write_triangle_mesh(str(mesh_reconst_path) + ".ply", reconst_mesh)
+    box = reconst_mesh.get_axis_aligned_bounding_box()
+    box.color = (1, 0, 0)
+    mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
+    o3d.visualization.draw_geometries([reconst_mesh, mesh_frame, box])
+
+    #reconstructed_model.save(str(mesh_reconst_path))
+
+    #if visualise_result:
+        #reconstructed_model.visualize()
 
 
