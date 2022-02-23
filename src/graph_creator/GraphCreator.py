@@ -1,5 +1,3 @@
-from calendar import c
-from cmath import inf
 from src.graph_creator.core.PipelineGraph import PipelineGraph, PipelinePart
 from src.pipeline_constructor.PipelineConstructor import PipelineConstructor
 from src.core.PointCloud import PointCloud
@@ -10,13 +8,7 @@ from src.core.PartType import random_part_type, random_pipe_type
 import numpy as np
 import open3d as o3d
 
-
-# Program to find most frequent
-# element in a list
-def most_frequent(List):
-    return max(set(List), key = List.count)
- 
-
+import pathlib
 
 
 def intersects(a: o3d.geometry.AxisAlignedBoundingBox, b: o3d.geometry.AxisAlignedBoundingBox) -> bool:
@@ -206,72 +198,47 @@ class GraphCreator:
         return pipe, new_part
 
     def build_graph(self, point_cloud: PointCloud) -> PipelineGraph:
-        assert point_cloud.is_classified()        
+        assert point_cloud.is_classified()
 
-        ### pas ici 
-        import pathlib
-        import matplotlib.pyplot as plt
         save_path = 'scripts/output'
         resource_dir = pathlib.Path(__file__).parent.parent.parent
 
-        ANGLE = 1
-        TEE = 2
-        CROSS = 3
-        PIPE_1 = 4
-        PIPE_2 = 5
-        PIPE_3 = 6
-        PIPE_4 = 7
+        full_graph = PipelineGraph()
 
-        labels = [PartType.ANGLE, PartType.TEE, PartType.CROSS, PartType.PIPE_1, PartType.PIPE_2, PartType.PIPE_3, PartType.PIPE_4]
         part_index = 0
-        ###
 
-        # Partie 1 : GENERATION DU GRAPHE
-
-        graph = PipelineGraph()
-
-        # Pour chaque label existant dans le dico 
-        for label in labels :
-            
+        for label in PartType:
             list_points = []
             class_list_points = []
-            
-            # selectionner l'ensemble des points qui ont ce labels 
-            for j in range(0, len(point_cloud.points)): # écrire en 1 ligne             
+
+            # selectionner l'ensemble des points qui ont ce labels
+            for j in range(0, len(point_cloud.points)):
                 point = point_cloud.points[j]
-                if (point.part_type == label) : 
-                    list_points.append([point.x, point.y, point.z])   
-                    class_list_points.append(point)          
-                array_points=np.array(list_points)
 
-            #en faire un nuage 
-            if list_points :
+                if point.part_type == label:
+                    list_points.append(point.center)
+                    class_list_points.append(point)
 
+                array_points = np.array(list_points)
+
+            # en faire un nuage
+            if list_points:
                 class_pcd = o3d.geometry.PointCloud()
                 class_pcd.points = o3d.utility.Vector3dVector(array_points)
-                    
-                # DBSCAN sur ce nuage (doit contenir au moins min_points et à moins de 2 m de distance)
-                with o3d.utility.VerbosityContextManager(
-                        o3d.utility.VerbosityLevel.Debug) as cm:
-                    labels_ = np.array(
-                        class_pcd.cluster_dbscan(eps=1.1, min_points=15, print_progress=True))
-                
+
+                # DBSCAN sur ce nuage (doit contenir au moins min_points et à moins de 2 m de distance)
+                with o3d.utility.VerbosityContextManager(o3d.utility.VerbosityLevel.Debug) as cm:
+                    labels_ = np.array(class_pcd.cluster_dbscan(eps=1.1, min_points=15, print_progress=True))
+
                 max_label = labels_.max()
 
-                print(f"label {str(label)}  has {max_label} clusters of lengths :")
+                print(f"label {str(label)} has {max_label} clusters of lengths :")
 
-                colors = plt.get_cmap("tab20")(labels_ / (max_label if max_label > 0 else 1))
-                colors[labels_ < 0] = 0
-                class_pcd.colors = o3d.utility.Vector3dVector(colors[:, :3])
-
-                #o3d.visualization.draw_geometries([class_pcd])
-                class_pcd_path = resource_dir / save_path /  (str(label) + "_pcd.ply")
+                class_pcd_path = resource_dir / save_path / (str(label) + "_pcd.ply")
                 o3d.io.write_point_cloud(str(class_pcd_path), class_pcd)
 
-            
                 # sur chaque cluster de ce nuage :
-                for k in range(0, max_label + 1) :
-                    
+                for k in range(0, max_label + 1):
                     cluster_types = []
                     cluster_x = []
                     cluster_y = []
@@ -282,16 +249,11 @@ class GraphCreator:
                     cluster_vz = []
 
                     length_cluster = 0
-                    #list_pts_cluster = []
 
-                    for j in range(0, len(class_pcd.points)): # écrire en 1 ligne             
-
+                    for j in range(0, len(class_pcd.points)):
                         point = class_list_points[j]
 
-                        if (labels_[j] == k) : # selection des points du cluster
-
-                            #list_pts_cluster.append(point)
-            
+                        if labels_[j] == k:  # selection des points du cluster
                             cluster_types.append(point.part_type)
 
                             cluster_x.append(point.center[0])
@@ -306,34 +268,13 @@ class GraphCreator:
 
                             length_cluster += 1
 
-                    print(length_cluster)
-                    #cluster_pcd = o3d.geometry.PointCloud()
-                    #cluster_pcd.points = o3d.utility.Vector3dVector(np.array(list_pts_cluster))      
-                    #o3d.visualization.draw_geometries([cluster_pcd])  
-                    
+                    new_center = np.asarray([np.mean(cluster_x), np.mean(cluster_y), np.mean(cluster_z)])
+                    new_direction = np.asarray([np.mean(cluster_vx), np.mean(cluster_vy), np.mean(cluster_vz)])
+                    new_type = max(set(cluster_types), key=cluster_types.count)
 
-                    # récupérer l'orientation la + courante (moyenne ? mediane en chaque coordonnée?)
-                    new_center = [most_frequent(cluster_x), most_frequent(cluster_y), most_frequent(cluster_z)]
-
-                    # récupérer la position du centre la + courante (moyenne ? mediane en chaque coordonnée?)
-                    new_direction = [most_frequent(cluster_vx), most_frequent(cluster_vy), most_frequent(cluster_vz)]
-
-                    new_type = most_frequent(cluster_types)
-                    new_radius = most_frequent(cluster_radius) # !
-                    
                     # ajouter la part correspondante au cluster
                     new_part = PipelinePart(new_type, new_center, new_direction, 1)
-                    graph.add_node(part_index, new_part)            
-                    part_index += 1                     
-                
+                    full_graph.add_node(part_index, new_part)
+                    part_index += 1
 
-
-        '''
-        # Partie 2 : GENERATION DE L'ARBRE avec MST etc ? (dans ce cas besoin d'un clustering + fin)
-        # 
-        # 
-        #                     
-        '''
-
-
-        return graph
+        return full_graph

@@ -1,9 +1,9 @@
 import argparse
 import random
 import pathlib
-
 import sys
-sys.path.append('../PyPipes')
+
+import open3d as o3d
 
 from src.core.PartType import PartType, random_part_type, random_pipe_type
 from src.classifier.trainer.TrainingModel import create_training_model
@@ -13,19 +13,19 @@ from src.pipeline_constructor.PipelineConstructor import PipelineConstructor
 
 from copy import deepcopy
 
+sys.path.append('../PyPipes')
 save_path = 'scripts/output'
-resource_dir = pathlib.Path(__file__).parent.parent.parent
+resource_dir = pathlib.Path(__file__).parent.parent
 
-pcd_truth_path = resource_dir / save_path / ("pcd_truth.ply")
-labels_truth_path = resource_dir / save_path / ("labels_truth.json")
-mesh_truth_path = resource_dir / save_path / ("mesh_truth.ply")
+pcd_truth_path = resource_dir / save_path / "pcd_truth.ply"
+labels_truth_path = resource_dir / save_path / "labels_truth.json"
+mesh_truth_path = resource_dir / save_path / "mesh_truth.ply"
 
-labels_classif_path = resource_dir / save_path / ("labels_classif.json")
-mesh_reconst_path = resource_dir / save_path / ("mesh_reconst")
+labels_classif_path = resource_dir / save_path / "labels_classif.json"
+mesh_reconst_path = resource_dir / save_path / "mesh_reconst"
 
 
-###### mettre dans PointCloud ? dans un util commun ?
-def labelled_pcd_write(pcd : list, file_path : str):
+def labelled_pcd_write(pcd: list, file_path: str):
 
     import json
     from src.core.PartType import EnumEncoder, as_part_type
@@ -43,9 +43,6 @@ def labelled_pcd_write(pcd : list, file_path : str):
 
     with open(file_path, 'w') as outfile:
         json.dump(json_string, outfile)
-######
-
-
 
 
 if __name__ == '__main__':
@@ -53,7 +50,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--nbParts', type=int, default=10, help='Number of parts used in the generated Pipeline')
     parser.add_argument('--sampling', type=int, default=100, help='Number of points generated per pipeline part')
-    parser.add_argument('--simulatedAccuracy', type=float, default=0.95,
+    parser.add_argument('--simulatedAccuracy', type=float, default=0.50,
                         help='Simulated classification accuracy (Percentage between 0 and 1)')
     parser.add_argument('--simulatedCenterError', type=float, default=0.05,
                         help='Simulated error on part center characteristic (Percentage between 0 and 1)')
@@ -76,11 +73,8 @@ if __name__ == '__main__':
     
     labels_truth_points = deepcopy(model.point_cloud_labelled.points)
     labelled_pcd_write(labels_truth_points, str(labels_truth_path)) 
-    #model.save_model(str(labels_truth_path))
     model.save_mesh(str(mesh_truth_path))
     model.save_pcd(str(pcd_truth_path))
-
-
 
     # Simulate classification
     simulated_accuracy = args.simulatedAccuracy
@@ -120,16 +114,12 @@ if __name__ == '__main__':
    
     labelled_pcd_write(classification.points, str(labels_classif_path)) 
 
-
-
-
-
     graph_creator = GraphCreator()
     pipeline_constructor = PipelineConstructor()
     
     reconstructed_graph = graph_creator.build_graph(classification)
     reconstructed_model = pipeline_constructor.construct_pipeline(reconstructed_graph)
-    reconstructed_model.save(str(mesh_reconst_path))
+    reconstructed_model.save(mesh_reconst_path)
 
     if visualise_result:
         reconstructed_model.visualize()
