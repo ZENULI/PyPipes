@@ -2,6 +2,7 @@ import argparse
 import random
 import pathlib
 import sys
+sys.path.append('../PyPipes')
 
 import open3d as o3d
 
@@ -13,7 +14,6 @@ from src.pipeline_constructor.PipelineConstructor import PipelineConstructor
 
 from copy import deepcopy
 
-sys.path.append('../PyPipes')
 save_path = 'scripts/output'
 resource_dir = pathlib.Path(__file__).parent.parent
 
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--nbParts', type=int, default=10, help='Number of parts used in the generated Pipeline')
     parser.add_argument('--sampling', type=int, default=100, help='Number of points generated per pipeline part')
-    parser.add_argument('--simulatedAccuracy', type=float, default=0.50,
+    parser.add_argument('--simulatedAccuracy', type=float, default=0.95,
                         help='Simulated classification accuracy (Percentage between 0 and 1)')
     parser.add_argument('--simulatedCenterError', type=float, default=0.05,
                         help='Simulated error on part center characteristic (Percentage between 0 and 1)')
