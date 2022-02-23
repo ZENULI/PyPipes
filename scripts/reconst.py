@@ -3,15 +3,16 @@ import random
 import pathlib
 import sys
 
-import open3d as o3d
-
 from src.core.PartType import PartType, random_part_type, random_pipe_type
+from src.graph_creator.core.PipelineGraph import PipelineGraph
 from src.classifier.trainer.TrainingModel import create_training_model
 
 from src.graph_creator.GraphCreator import GraphCreator
 from src.pipeline_constructor.PipelineConstructor import PipelineConstructor
 
 from copy import deepcopy
+
+import numpy as np
 
 sys.path.append('../PyPipes')
 save_path = 'scripts/output'
@@ -45,12 +46,58 @@ def labelled_pcd_write(pcd: list, file_path: str):
         json.dump(json_string, outfile)
 
 
+def compare_graphs(reference: PipelineGraph, reconstructed: PipelineGraph) -> None:
+    part_numbers_reference = {part_type: 0 for part_type in PartType}
+    part_numbers_reconstructed = {part_type: 0 for part_type in PartType}
+
+    centers_reference = []
+    direction_reference = []
+
+    centers_reconstructed = []
+    direction_reconstructed = []
+
+    reference_graph = reference.graph
+    reconst_graph = reconstructed.graph
+
+    for idx in range(0, reference_graph.number_of_nodes()):
+        part_numbers_reference[reference_graph.nodes[idx]['type']] += 1
+
+        centers_reference.append(reference_graph.nodes[idx]['coordinates'])
+        direction_reference.append(reference_graph.nodes[idx]['direction'])
+
+    for idx in range(0, reconst_graph.number_of_nodes()):
+        part_numbers_reconstructed[reconst_graph.nodes[idx]['type']] += 1
+
+        centers_reconstructed.append(reconst_graph.nodes[idx]['coordinates'])
+        direction_reconstructed.append(reconst_graph.nodes[idx]['direction'])
+
+    for part_type in PartType:
+        print("Expected {} {}, got {}".format(part_numbers_reference[part_type], part_type.name,
+                                              part_numbers_reconstructed[part_type]))
+
+    if len(centers_reference) > len(centers_reconstructed):
+        np.pad(centers_reconstructed, [(0, 1)], mode='constant')
+    elif len(centers_reference) < len(centers_reconstructed):
+        np.pad(centers_reference, [(0, 1)], mode='constant')
+
+    if len(direction_reference) > len(direction_reconstructed):
+        np.pad(direction_reconstructed, [(0, 1)], mode='constant')
+    elif len(direction_reference) < len(direction_reconstructed):
+        np.pad(direction_reference, [(0, 1)], mode='constant')
+
+    mse_centers = (np.square(np.asarray(centers_reference) - np.asarray(centers_reconstructed))).mean(axis=None)
+    mse_direction = (np.square(np.asarray(direction_reference) - np.asarray(direction_reconstructed))).mean(axis=None)
+
+    print("Part center MSE : {}".format(mse_centers))
+    print("Part direction MSE : {}".format(mse_direction))
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generates a random pipeline and try to reconstruct it after shuffling")
 
     parser.add_argument('--nbParts', type=int, default=10, help='Number of parts used in the generated Pipeline')
     parser.add_argument('--sampling', type=int, default=100, help='Number of points generated per pipeline part')
-    parser.add_argument('--simulatedAccuracy', type=float, default=0.95,
+    parser.add_argument('--simulatedAccuracy', type=float, default=0.9,
                         help='Simulated classification accuracy (Percentage between 0 and 1)')
     parser.add_argument('--simulatedCenterError', type=float, default=0.05,
                         help='Simulated error on part center characteristic (Percentage between 0 and 1)')
@@ -122,6 +169,9 @@ if __name__ == '__main__':
     reconstructed_graph = graph_creator.build_graph(classification)
     reconstructed_model = pipeline_constructor.construct_pipeline(reconstructed_graph)
     reconstructed_model.save(mesh_reconst_path, extension=args.saveFormat)
+
+    if model.model_graph is not None:
+        compare_graphs(model.model_graph, reconstructed_graph)
 
     if visualise_result:
         reconstructed_model.visualize()
