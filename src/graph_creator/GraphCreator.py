@@ -7,7 +7,7 @@ from src.core.PartType import random_part_type, random_pipe_type
 
 import numpy as np
 import open3d as o3d
-
+import matplotlib.pyplot as plt
 import pathlib
 
 
@@ -210,6 +210,7 @@ class GraphCreator:
         for label in PartType:
             list_points = []
             class_list_points = []
+            list_points_coordinates = []
 
             # selectionner l'ensemble des points qui ont ce labels
             for j in range(0, len(point_cloud.points)):
@@ -218,14 +219,19 @@ class GraphCreator:
                 if point.part_type == label:
                     list_points.append(point.center)
                     class_list_points.append(point)
+                    list_points_coordinates.append([point.x, point.y, point.z])
 
                 array_points = np.array(list_points)
+                array_points_world = np.array(list_points_coordinates)
 
             # en faire un nuage
             if list_points:
                 class_pcd = o3d.geometry.PointCloud()
                 class_pcd.points = o3d.utility.Vector3dVector(array_points)
 
+                class_pcd_world = o3d.geometry.PointCloud()
+                class_pcd_world.points = o3d.utility.Vector3dVector(array_points_world)
+                
                 # DBSCAN sur ce nuage (doit contenir au moins min_points et à moins de 2 m de distance)
                 with o3d.utility.VerbosityContextManager(o3d.utility.VerbosityLevel.Debug) as cm:
                     labels_ = np.array(class_pcd.cluster_dbscan(eps=1.1, min_points=15, print_progress=True))
@@ -234,8 +240,15 @@ class GraphCreator:
 
                 print(f"label {str(label)} has {max_label} clusters of lengths :")
 
+                colors = plt.get_cmap("tab20")(labels_ / (max_label if max_label > 0 else 1))
+                colors[labels_ < 0] = 0
+                class_pcd_world.colors = o3d.utility.Vector3dVector(colors[:, :3])
+
                 class_pcd_path = resource_dir / save_path / (str(label) + "_pcd.ply")
-                o3d.io.write_point_cloud(str(class_pcd_path), class_pcd)
+
+                o3d.io.write_point_cloud(str(class_pcd_path), class_pcd_world)
+
+
 
                 # sur chaque cluster de ce nuage :
                 for k in range(0, max_label + 1):
