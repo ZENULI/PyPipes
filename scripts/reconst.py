@@ -59,17 +59,33 @@ def compare_graphs(reference: PipelineGraph, reconstructed: PipelineGraph) -> No
     reference_graph = reference.graph
     reconst_graph = reconstructed.graph
 
+    ordered_reconstructed_nodes = [None] * max(reference_graph.number_of_nodes(), reconst_graph.number_of_nodes())
+
     for idx in range(0, reference_graph.number_of_nodes()):
         part_numbers_reference[reference_graph.nodes[idx]['type']] += 1
 
-        centers_reference.append(reference_graph.nodes[idx]['coordinates'])
+        reference_center = reference_graph.nodes[idx]['coordinates']
+
+        centers_reference.append(reference_center)
         direction_reference.append(reference_graph.nodes[idx]['direction'])
 
-    for idx in range(0, reconst_graph.number_of_nodes()):
-        part_numbers_reconstructed[reconst_graph.nodes[idx]['type']] += 1
+        min_distance = np.inf
+        matching_recons_node = 0
+        for idx_recons in range(0, reconst_graph.number_of_nodes()):
+            dist = np.linalg.norm(reconst_graph.nodes[idx_recons]['coordinates'] - reference_center)
 
-        centers_reconstructed.append(reconst_graph.nodes[idx]['coordinates'])
-        direction_reconstructed.append(reconst_graph.nodes[idx]['direction'])
+            if dist < min_distance:
+                min_distance = dist
+                matching_recons_node = idx_recons
+
+        ordered_reconstructed_nodes[idx] = reconst_graph.nodes[matching_recons_node]
+
+    for idx in range(0, reconst_graph.number_of_nodes()):
+        if ordered_reconstructed_nodes[idx] is not None:
+            part_numbers_reconstructed[ordered_reconstructed_nodes[idx]['type']] += 1
+
+            centers_reconstructed.append(ordered_reconstructed_nodes[idx]['coordinates'])
+            direction_reconstructed.append(ordered_reconstructed_nodes[idx]['direction'])
 
     for part_type in PartType:
         print("Expected {} {}, got {}".format(part_numbers_reference[part_type], part_type.name,
@@ -85,8 +101,14 @@ def compare_graphs(reference: PipelineGraph, reconstructed: PipelineGraph) -> No
     elif len(direction_reference) < len(direction_reconstructed):
         np.pad(direction_reference, [(0, 1)], mode='constant')
 
-    mse_centers = (np.square(np.asarray(centers_reference) - np.asarray(centers_reconstructed))).mean(axis=None)
-    mse_direction = (np.square(np.asarray(direction_reference) - np.asarray(direction_reconstructed))).mean(axis=None)
+    centers_reference = np.asarray(centers_reference)
+    centers_reconstructed = np.asarray(centers_reconstructed)
+
+    direction_reference = np.asarray(direction_reference)
+    direction_reconstructed = np.asarray(direction_reconstructed)
+
+    mse_centers = (np.square(centers_reference - centers_reconstructed)).mean(axis=None)
+    mse_direction = (np.square(direction_reference - direction_reconstructed)).mean(axis=None)
 
     print("Part center MSE : {}".format(mse_centers))
     print("Part direction MSE : {}".format(mse_direction))
@@ -97,7 +119,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--nbParts', type=int, default=10, help='Number of parts used in the generated Pipeline')
     parser.add_argument('--sampling', type=int, default=100, help='Number of points generated per pipeline part')
-    parser.add_argument('--simulatedAccuracy', type=float, default=0.9,
+    parser.add_argument('--simulatedAccuracy', type=float, default=0.85,
                         help='Simulated classification accuracy (Percentage between 0 and 1)')
     parser.add_argument('--simulatedCenterError', type=float, default=0.05,
                         help='Simulated error on part center characteristic (Percentage between 0 and 1)')
