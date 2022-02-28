@@ -51,7 +51,7 @@ $ python scripts/generate_data_samples.py
 ```
 #### Train the model
 
-####### [WARNING] This part is currently in progress !
+###### [WARNING] This part is currently in progress !
 
 #### Run the pipeline
 ```bash
