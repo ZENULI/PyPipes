@@ -6,7 +6,7 @@ def main(args):
 
 if __name__ == '__main__':
 
-    """input arguments"""
+    """TO DO"""
 
     parser = argparse.ArgumentParser()
     #parser.add_argument('--image', type=str, required=True, help='input image for generating caption')

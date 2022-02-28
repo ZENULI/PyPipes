@@ -1,8 +1,7 @@
 # PyPipes
 
-**[Documentation](https://zenuli.github.io/)** | **[Paper](https://doi.org/10.1016/j.gmod.2020.101079)** | **[Colab Notebooks](https://drive.google.com/drive/folders/1InpU4yZAYGR9_NB4wSGDx7t2d6K2b9zy?usp=sharing)** | **[Video Tutorials]()** | **[Master Degree website](https://departement-informatique.univ-tlse3.fr/master-igai/)** 
+**[Paper](https://doi.org/10.1016/j.gmod.2020.101079)** | **[Master Degree website](https://departement-informatique.univ-tlse3.fr/master-igai/)** 
 
-### [WARNING] Project currently in progress !
 
 **This project** is a [PyTorch](https://pytorch.org/) implementation of *DeepPipes: Learning 3D pipelines reconstruction from point clouds. Lili Cheng, Zhuo Wei, Mingchao Sun, Shiqing Xin, Andrei Sharf, Yangyan Li, Baoquan Chen, Changhe Tu. Graphical Models, Volume 111, 2020,*. 
 
@@ -10,7 +9,6 @@ It allows to reconstruct a 3d pipe model from a points cloud.
 
 
 <img src="docs/source/_static/img/pipeline.png" alt="drawing" height="200"/>
-
 
 
 ```
@@ -31,105 +29,42 @@ Keywords: Point cloud, Pipes reconstruction, Convo-
 lution network, Skeleton extraction
 
 ```
-
-## Table of Contents
-
-#### 1. [Architecture Overview](https://github.com/ZENULI/PyPipes#architecture-overview)
-* [The pipeline](https://github.com/ZENULI/PyPipes#the-pipeline)
-* [Neural Network](https://github.com/ZENULI/PyPipes#neural-network)
-
-#### 2. [Download](https://github.com/ZENULI/PyPipes#download)
-* [Requirements](https://github.com/ZENULI/PyPipes#requirements)
-* [From master](https://github.com/ZENULI/PyPipes#from-master)
-* [With Docker](https://github.com/ZENULI/PyPipes#with-docker)
-
-#### 3. [Getting Started](https://github.com/ZENULI/PyPipes#getting-started)
-
-#### 4. [License](https://github.com/ZENULI/PyPipes#license)
-
 <br>
-
-## Architecture Overview
-
-### The pipeline
-
-```
-**TODO**
-```
-
-<img src="docs/source/_static/img/project_architecture.png" alt="drawing" height="400"/>
-
-
-### Neural Network 
-
-```
-**TODO**
-```
-<img src="docs/source/_static/img/nn_architecture.png" alt="drawing" height="300"/>
-
-
-## Download
-
-**Warning:** We do not recommend installation of the environnement as a root user on your system Python. Please setup a virtual environment or create a Docker image.
-
-|             | `cpu` | `cu102` | `cu113` |
-|-------------|-------|---------|---------|
-| **Linux**   | ✅    |         |         |
-| **Windows** |       |         |         |
-| **macOS**   |       |         |         |
-
-### Requirements
-
-```
-**TODO**
-```
-
-### From master
-
-#### Build the project
-```bash
-$ git clone https://github.com/ZENULI/PyPipes.git
-$ cd PyPipes
-$ pip install -r requirements.txt
-$ make
-```
-#### Test the installation
-```bash
-$ python3 setup.py test
-```
-You can find some more tests under the `testing/` folder!
-```bash
-$  pytest testing/test_application.py
-```
-### From Docker
-See documentation [here](https://github.com/ZENULI/PyPipes/tree/main/docker).
 
 ## Getting Started 
 
-#### 1. Generate the dataset
-You can generate the dataset using our other project [CloudPipesGenerator](https://github.com/ZENULI/CloudPipesGenerator)
+**Warning:** We do not recommend installation of the environnement as a root user on your system Python. Please setup a virtual environment or create a Docker image.
+
+Not tested on macOS. 
+
+|             | `cpu` | `cu102` | `cu113` |
+|-------------|-------|---------|---------|
+| **Linux**   | ✅    |  ✅     |         |
+| **Windows** | ✅    |  ✅     |         |
+| **macOS**   |       |         |         |
+
+
+
+#### Generate the dataset
 ```bash
-$ python3 PATH_TO_CLOUDPIPESGENERATOR/generate_dataset.py -n 5000 -m 4 data/pointclouds
+$ python scripts/generate_data_samples.py
 ```
-###### Or download our dataset online
-If you do not want to generate the dataset, you can download our own. 
+#### Train the model
+
+##### [WARNING] This part is currently in progress !
+
+#### Run the pipeline
 ```bash
-$ chmod +x scripts/download.sh
-$ ./scripts/download.sh
+$ python scripts/reconst.py 
 ```
-#### 2. Preprocessing
-```bash
-```
-#### 3. Train the model
-```bash
-$ python scripts/train.py    
-```
-###### Or use our pretrained model
-If you do not want to train the model from scratch, you can use a pretrained model. You can download the pretrained model [here](https://www.dropbox.com/s/ne0ixz5d58ccbbz/pretrained_model.zip?dl=0) and the vocabulary file [here](https://www.dropbox.com/s/26adb7y9m98uisa/vocap.zip?dl=0). You should extract pretrained_model.zip to `./models/` and vocab.pkl to `./data/` using `unzip` command.
-#### 4. Test the model 
-```bash
-$ python scripts/reconst.py --graph='graph.format'
-```
+
+## Some results 
+
+<img src="docs/source/_static/img/white02.png" alt="drawing" height="200"/>
+DBscan clustering
+<br>
+<img src="docs/source/_static/img/white00_L07.png" alt="drawing" height="200"/>
+3D reconstruction of the model
 
 ## License
 
